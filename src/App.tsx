@@ -1,9 +1,7 @@
+import { Playlist } from './pages/Playlist';
+
 function App() {
-  return (
-    <div>
-      <h1>Hello World!</h1>
-    </div>
-  );
+  return <Playlist />;
 }
 
 export default App;
