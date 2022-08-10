@@ -17,6 +17,7 @@ Application for listen one playlist or maybe manager some event with lessons.
 -   [ ] GraphQL
 -   [ ] GraphQL CMS
 -   [ ] GraphQL Codegen
+-   [ ] Apollo Client
 
 ## 🚀 Deploy
 
