@@ -5,7 +5,6 @@ const GET_MUSICS_QUERY = gql`
   query GetMusics {
     musics(orderBy: availableAt_ASC, stage: PUBLISHED) {
       id
-      musicType
       availableAt
       title
       slug
@@ -19,7 +18,6 @@ interface GetMusicsQueryResponse {
     title: string;
     slug: string;
     availableAt: string;
-    musicType: 'play' | 'playing';
   }[];
 }
 
@@ -40,7 +38,6 @@ export function Sidebar() {
               title={music.title}
               slug={music.slug}
               availableAt={new Date(music.availableAt)}
-              type={music.musicType}
             />
           );
         })}

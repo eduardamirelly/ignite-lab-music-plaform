@@ -1,16 +1,18 @@
 import { isPast, format } from 'date-fns';
 import { CheckCircle, Lock } from 'phosphor-react';
 import ptBR from 'date-fns/locale/pt-BR';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import classNames from 'classnames';
 
 interface MusicProps {
   title: string;
   slug: string;
   availableAt: Date;
-  type: 'play' | 'playing';
 }
 
 export function Music(props: MusicProps) {
+  const { slug } = useParams<{ slug: string }>();
+
   const isMusicAvailable = isPast(props.availableAt);
   const availableDateFormatted = format(
     props.availableAt,
@@ -20,14 +22,34 @@ export function Music(props: MusicProps) {
     }
   );
 
+  const isActiveMusic = slug === props.slug;
+
   return (
-    <Link to={`/playlist/music/${props.slug}`} className="group">
+    <Link
+      to={`${isMusicAvailable ? `/playlist/music/${props.slug}` : '/playlist'}`}
+      className="group"
+    >
       <span className="text-gray-300">{availableDateFormatted}</span>
 
-      <div className="rounded border border-gray-500 group-hover:border-brown-500 p-4 mt-2">
+      <div
+        className={classNames(
+          'rounded border border-gray-500 group-hover:border-brown-500 p-4 mt-2',
+          {
+            'bg-brown-500': isActiveMusic,
+          }
+        )}
+      >
         <header className="flex items-center justify-between">
           {isMusicAvailable ? (
-            <span className="text-sm text-brown-400 font-medium flex items-center gap-2">
+            <span
+              className={classNames(
+                'text-sm font-medium flex items-center gap-2',
+                {
+                  'text-brown-400': !isActiveMusic,
+                  'text-white': isActiveMusic,
+                }
+              )}
+            >
               <CheckCircle size={20} />
               Vídeo liberado
             </span>
@@ -38,12 +60,27 @@ export function Music(props: MusicProps) {
             </span>
           )}
 
-          <span className="text-xs uppercase rounded px-2 py-[0.125rem] text-white border border-brown-500 font-bold">
-            {props.type === 'play' ? 'Tocar' : 'Tocando'}
+          <span
+            className={classNames(
+              'text-xs uppercase rounded px-2 py-[0.125rem] text-white border font-bold',
+              {
+                'border-brown-500': !isActiveMusic,
+                'border-white': isActiveMusic && isMusicAvailable,
+              }
+            )}
+          >
+            {!isActiveMusic ? 'Tocar' : 'Tocando'}
           </span>
         </header>
 
-        <strong className="text-gray-200 mt-5 block">{props.title}</strong>
+        <strong
+          className={classNames('mt-5 block', {
+            'text-white': isActiveMusic && isMusicAvailable,
+            'text-gray-200': !isActiveMusic,
+          })}
+        >
+          {props.title}
+        </strong>
       </div>
     </Link>
   );
