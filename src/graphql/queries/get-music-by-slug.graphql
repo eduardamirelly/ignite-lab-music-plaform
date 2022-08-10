@@ -1,0 +1,12 @@
+query GetMusicBySlug($slug: String) {
+  music(where: { slug: $slug }) {
+    title
+    videoId
+    description
+    channel {
+      name
+      description
+      avatarUrl
+    }
+  }
+}

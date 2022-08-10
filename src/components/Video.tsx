@@ -1,53 +1,25 @@
 import { DefaultUi, Player, Youtube } from '@vime/react';
 import '@vime/core/themes/default.css';
-import { gql, useQuery } from '@apollo/client';
 import {
   CaretRight,
   DiscordLogo,
   FileArrowDown,
   Lightning,
 } from 'phosphor-react';
-
-const GET_MUSIC_BY_SLUG_QUERY = gql`
-  query GetMusicBySlug($slug: String) {
-    music(where: { slug: $slug }) {
-      title
-      videoId
-      description
-      channel {
-        name
-        description
-        avatarUrl
-      }
-    }
-  }
-`;
+import { useGetMusicBySlugQuery } from '../graphql/generated';
 
 interface VideoProps {
   musicSlug: string;
 }
 
-interface GetMusicBySlugResponse {
-  music: {
-    title: string;
-    videoId: string;
-    description: string;
-    channel: {
-      name: string;
-      description: string;
-      avatarUrl: string;
-    };
-  };
-}
-
 export function Video(props: VideoProps) {
-  const { data } = useQuery<GetMusicBySlugResponse>(GET_MUSIC_BY_SLUG_QUERY, {
+  const { data } = useGetMusicBySlugQuery({
     variables: {
       slug: props.musicSlug,
     },
   });
 
-  if (!data) {
+  if (!data || !data.music) {
     return (
       <div className="flex-1">
         <p>Carregando...</p>
@@ -74,22 +46,24 @@ export function Video(props: VideoProps) {
               {data.music.description}
             </p>
 
-            <div className="flex items-center gap-4 mt-6">
-              <img
-                className="h-16 w-16 rounded-full border-2 border-brown-400"
-                src={data.music.channel.avatarUrl}
-                alt=""
-              />
+            {data.music.channel && (
+              <div className="flex items-center gap-4 mt-6">
+                <img
+                  className="h-16 w-16 rounded-full border-2 border-brown-400"
+                  src={data.music.channel.avatarUrl}
+                  alt=""
+                />
 
-              <div className="leading-relaxed">
-                <strong className="font-bold text-2xl block">
-                  {data.music.channel.name}
-                </strong>
-                <span className="text-gray-200 text-sm block">
-                  {data.music.channel.description}
-                </span>
+                <div className="leading-relaxed">
+                  <strong className="font-bold text-2xl block">
+                    {data.music.channel.name}
+                  </strong>
+                  <span className="text-gray-200 text-sm block">
+                    {data.music.channel.description}
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <div className="flex flex-col gap-4">

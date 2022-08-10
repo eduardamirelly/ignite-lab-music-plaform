@@ -1,28 +1,8 @@
-import { gql, useQuery } from '@apollo/client';
+import { useGetMusicsQuery } from '../graphql/generated';
 import { Music } from './Music';
 
-const GET_MUSICS_QUERY = gql`
-  query GetMusics {
-    musics(orderBy: availableAt_ASC, stage: PUBLISHED) {
-      id
-      availableAt
-      title
-      slug
-    }
-  }
-`;
-
-interface GetMusicsQueryResponse {
-  musics: {
-    id: string;
-    title: string;
-    slug: string;
-    availableAt: string;
-  }[];
-}
-
 export function Sidebar() {
-  const { data } = useQuery<GetMusicsQueryResponse>(GET_MUSICS_QUERY);
+  const { data } = useGetMusicsQuery();
 
   return (
     <aside className="w-[348px] bg-gray-700 p-6 border-l border-gray-600">
