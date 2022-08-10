@@ -6,6 +6,7 @@ export function Router() {
     <Routes>
       <Route path="/" element={<h1>Home</h1>} />
       <Route path="/playlist" element={<Playlist />} />
+      <Route path="/playlist/music/:slug" element={<Playlist />} />
     </Routes>
   );
 }

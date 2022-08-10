@@ -1,5 +1,6 @@
 import { DefaultUi, Player, Youtube } from '@vime/react';
 import '@vime/core/themes/default.css';
+import { gql, useQuery } from '@apollo/client';
 import {
   CaretRight,
   DiscordLogo,
@@ -7,13 +8,59 @@ import {
   Lightning,
 } from 'phosphor-react';
 
-export function Video() {
+const GET_MUSIC_BY_SLUG_QUERY = gql`
+  query GetMusicBySlug($slug: String) {
+    music(where: { slug: $slug }) {
+      title
+      videoId
+      description
+      channel {
+        name
+        description
+        avatarUrl
+      }
+    }
+  }
+`;
+
+interface VideoProps {
+  musicSlug: string;
+}
+
+interface GetMusicBySlugResponse {
+  music: {
+    title: string;
+    videoId: string;
+    description: string;
+    channel: {
+      name: string;
+      description: string;
+      avatarUrl: string;
+    };
+  };
+}
+
+export function Video(props: VideoProps) {
+  const { data } = useQuery<GetMusicBySlugResponse>(GET_MUSIC_BY_SLUG_QUERY, {
+    variables: {
+      slug: props.musicSlug,
+    },
+  });
+
+  if (!data) {
+    return (
+      <div className="flex-1">
+        <p>Carregando...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1">
       <div className="bg-black flex justify-center">
         <div className="h-full w-full max-w-[1100px] max-h-[60vh] aspect-video">
           <Player>
-            <Youtube videoId="0CEkbD3nepI" />
+            <Youtube videoId={data.music.videoId} />
             <DefaultUi />
           </Player>
         </div>
@@ -22,27 +69,24 @@ export function Video() {
       <div className="p-8 max-w-[1100px] mx-auto">
         <div className="flex items-start gap-16">
           <div className="flex-1">
-            <h1 className="text-2xl font-bold">Música #00</h1>
+            <h1 className="text-2xl font-bold">{data.music.title}</h1>
             <p className="mt-4 text-gray-200 leading-relaxed">
-              Provided to YouTube by RCA/Legacy Take Me Home, Country Roads ·
-              John Denver Poems, Prayers and Promises ℗ Originally released
-              1971. All rights reserved by RCA Records, a division of Sony Music
-              Entertainment Released on: 1971-04-06
+              {data.music.description}
             </p>
 
             <div className="flex items-center gap-4 mt-6">
               <img
                 className="h-16 w-16 rounded-full border-2 border-brown-400"
-                src="https://github.com/eduardamirelly.png"
+                src={data.music.channel.avatarUrl}
                 alt=""
               />
 
               <div className="leading-relaxed">
                 <strong className="font-bold text-2xl block">
-                  Eduarda Mirelly
+                  {data.music.channel.name}
                 </strong>
                 <span className="text-gray-200 text-sm block">
-                  Desenvolvedora
+                  {data.music.channel.description}
                 </span>
               </div>
             </div>
