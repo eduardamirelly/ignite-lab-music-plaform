@@ -1,7 +1,12 @@
-import { Playlist } from './pages/Playlist';
+import { BrowserRouter } from 'react-router-dom';
+import { Router } from './Router';
 
 function App() {
-  return <Playlist />;
+  return (
+    <BrowserRouter>
+      <Router />
+    </BrowserRouter>
+  );
 }
 
 export default App;
